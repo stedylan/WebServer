@@ -80,11 +80,9 @@ make
 ```
 
 ## 压力测试
-![image-webbench](https://github.com/markparticle/WebServer/blob/master/readme.assest/%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95.png)
 ```bash
-./webbench-1.5/webbench -c 100 -t 10 http://ip:port/
-./webbench-1.5/webbench -c 1000 -t 10 http://ip:port/
-./webbench-1.5/webbench -c 5000 -t 10 http://ip:port/
+cd webbench-1.5
+make
 ./webbench-1.5/webbench -c 10000 -t 10 http://ip:port/
 ```
 
@@ -106,6 +104,9 @@ kubectl apply -f mysql-service.yaml
 kubectl apply -f webserver-rs.yaml
 kubectl apply -f webserver-service.yaml
 ```
+
+`webserver-service.yaml`里设置了集群外部访问，端口为`32000`，输入`http://集群外部地址:32000`即可访问webserver
+
 ## 集群压测
 配置: 1台master节点(不参与负载)，两台node节点均为2G 2核心
 - 一个node
