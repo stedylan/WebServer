@@ -98,7 +98,9 @@ kubectl apply -f mysql-service.yaml
 ### 部署webserver镜像
 将Dockerfile复制到上级目录，执行
 `docker build -t webserver:latest .`
-将镜像部署到私有仓库里，详见https://yeasy.gitbook.io/docker_practice/repository/registry
+
+得到镜像后，将镜像部署到私有仓库里，详见https://yeasy.gitbook.io/docker_practice/repository/registry
+
 部署到k8s，执行
 ```bash
 kubectl apply -f webserver-rs.yaml
