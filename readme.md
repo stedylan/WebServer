@@ -8,13 +8,14 @@
 * 基于小根堆实现的定时器，关闭超时的非活动连接；
 * 利用单例模式与阻塞队列实现异步的日志系统，记录服务器运行状态；
 * 利用RAII机制实现了数据库连接池，减少数据库连接建立与关闭的开销，同时实现了用户注册登录功能。
-
 * 增加logsys,threadpool测试单元(todo: timer, sqlconnpool, httprequest, httpresponse) 
 
 ## 环境要求
 * Linux
 * C++14
-* MySql
+* MySql 5.7
+* Kubernetes
+* Docker
 
 ## 目录树
 ```
@@ -86,15 +87,32 @@ make
 ./webbench-1.5/webbench -c 5000 -t 10 http://ip:port/
 ./webbench-1.5/webbench -c 10000 -t 10 http://ip:port/
 ```
-* 测试环境: Ubuntu:19.10 cpu:i5-8400 内存:8G 
-* QPS 10000+
 
-## TODO
-* config配置
-* 完善单元测试
-* 实现循环缓冲区
-
-## 致谢
-Linux高性能服务器编程，游双著.
-
-[@qinguoyi](https://github.com/qinguoyi/TinyWebServer)
+## k8s部署
+### 部署mysql
+```bash
+kubectl apply -f mysql-rc.yaml
+kubectl apply -f mysql-service.yaml
+```
+部署完mysql之后，在集群中查看mysql的ip地址，将本项目mysql的ip改为以上
+### 部署webserver镜像
+将Dockerfile复制到上级目录，执行
+`docker build -t webserver:latest .`
+将镜像部署到私有仓库里，详见https://yeasy.gitbook.io/docker_practice/repository/registry
+部署到k8s，执行
+```bash
+kubectl apply -f webserver-rs.yaml
+kubectl apply -f webserver-service.yaml
+```
+## 集群压测
+配置: 1台master节点(不参与负载)，两台node节点均为2G 2核心
+- 一个node
+	- 一个pod为 6743
+	- 两个pod为 8069
+	- 三个pod为 8786
+	- 四个pod为 9830
+- 两个node
+	- 两个pod为 12396
+	- 三个pod为 11676
+	- 四个pod为 13065
+	- 六个pod为 15973
